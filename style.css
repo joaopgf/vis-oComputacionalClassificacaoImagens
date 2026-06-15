@@ -1,0 +1,237 @@
+:root {
+    --bg:        #0a0f1c;
+    --bg-panel:  #111827;
+    --bg-elev:   #161f33;
+    --line:      #233048;
+    --ink:       #e8edf6;
+    --ink-soft:  #8a98b3;
+    --scan:      #34e0d0;   /* ciano de "visão de máquina" */
+    --scan-dim:  #1c4a47;
+    --warn:      #ffb648;
+    --display: "Space Grotesk", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(52,224,208,.08), transparent 60%),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--display);
+    min-height: 100vh;
+    padding: 2.5rem 1.25rem 4rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; }
+
+  /* ---- Cabeçalho ---- */
+  header { margin-bottom: 2rem; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--scan);
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: .9rem;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--scan);
+    box-shadow: 0 0 12px var(--scan);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+  h1 {
+    font-size: clamp(1.9rem, 5vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -.02em;
+  }
+  h1 .accent { color: var(--scan); }
+  header p {
+    color: var(--ink-soft);
+    margin-top: .7rem;
+    font-size: 1rem;
+    max-width: 52ch;
+  }
+
+  /* ---- Painel de configuração ---- */
+  .config {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .config label {
+    display: block;
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: .55rem;
+  }
+  .input-row { display: flex; gap: .6rem; flex-wrap: wrap; }
+  input[type=text] {
+    flex: 1 1 280px;
+    min-width: 0;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: .85rem;
+    padding: .8rem .9rem;
+    transition: border-color .15s;
+  }
+  input[type=text]:focus {
+    outline: none;
+    border-color: var(--scan);
+    box-shadow: 0 0 0 3px rgba(52,224,208,.12);
+  }
+  input[type=text]::placeholder { color: #4a5772; }
+
+  button {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: .92rem;
+    border: none;
+    border-radius: 10px;
+    padding: .8rem 1.4rem;
+    cursor: pointer;
+    transition: transform .1s, background .15s, opacity .15s;
+  }
+  button:active { transform: translateY(1px); }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-primary { background: var(--scan); color: #04201d; }
+  .btn-primary:hover:not(:disabled) { background: #4af0e0; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn-ghost:hover:not(:disabled) { border-color: var(--scan); color: var(--scan); }
+
+  .controls { display: flex; gap: .6rem; margin-top: .9rem; flex-wrap: wrap; }
+
+  /* ---- Área de visão ---- */
+  .stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 680px) { .stage { grid-template-columns: 1fr; } }
+
+  .viewport {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #webcam-container canvas { display: block; border-radius: 14px; }
+
+  .viewport .placeholder {
+    color: var(--ink-soft);
+    font-family: var(--mono);
+    font-size: .78rem;
+    text-align: center;
+    padding: 2rem;
+    letter-spacing: .04em;
+  }
+
+  /* Cantos de "mira" sobre a webcam */
+  .corners { position: absolute; inset: 12px; pointer-events: none; }
+  .corners span {
+    position: absolute; width: 22px; height: 22px;
+    border: 2px solid var(--scan);
+  }
+  .corners span:nth-child(1){ top:0; left:0; border-right:0; border-bottom:0; }
+  .corners span:nth-child(2){ top:0; right:0; border-left:0; border-bottom:0; }
+  .corners span:nth-child(3){ bottom:0; left:0; border-right:0; border-top:0; }
+  .corners span:nth-child(4){ bottom:0; right:0; border-left:0; border-top:0; }
+
+  /* ---- Leitura das classes ---- */
+  .readout { display: flex; flex-direction: column; gap: .85rem; }
+  .readout-head {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: .7rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .class-row { display: flex; flex-direction: column; gap: .35rem; }
+  .class-row .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .class-row .name {
+    font-size: .95rem;
+    font-weight: 500;
+    transition: color .15s;
+  }
+  .class-row .pct {
+    font-family: var(--mono);
+    font-size: .82rem;
+    color: var(--ink-soft);
+    transition: color .15s;
+  }
+  .bar {
+    height: 8px;
+    background: var(--bg-elev);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .bar .fill {
+    height: 100%;
+    width: 0%;
+    background: var(--scan-dim);
+    border-radius: 99px;
+    transition: width .12s linear, background .2s;
+  }
+  /* Classe vencedora destacada */
+  .class-row.lead .name { color: var(--scan); }
+  .class-row.lead .pct  { color: var(--scan); }
+  .class-row.lead .fill { background: var(--scan); box-shadow: 0 0 14px rgba(52,224,208,.5); }
+
+  /* ---- Status / erros ---- */
+  .status {
+    margin-top: 1.25rem;
+    font-family: var(--mono);
+    font-size: .78rem;
+    color: var(--ink-soft);
+    min-height: 1.2em;
+  }
+  .status.error { color: var(--warn); }
+  .status .dot { color: var(--scan); }
+
+  footer {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: .72rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+  footer code { color: var(--scan); }
